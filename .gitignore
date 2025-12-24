@@ -1,0 +1,59 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Pytest
+.pytest_cache/
+
+# MyPy
+.mypy_cache/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Environment variables
+.env
+
+
+# Alembic versions (optional, if you want to ignore migration history)
+# alembic/versions/
+
+# Logs
+*.log
+
+# Misc
+*.DS_Store
