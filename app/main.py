@@ -1,9 +1,22 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 from app.database import SessionLocal
 from app import models, auth
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 app = FastAPI(title="FastAPI Auth Example")
+
+origins = ["http://localhost:5173"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_db():
     db = SessionLocal()
@@ -12,24 +25,31 @@ def get_db():
     finally:
         db.close()
 
+
+class RegisterRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+
 @app.get("/")
 def root():
     return {"status": "ok"}
 
-@app.post("/register")
-def register(name: str, email: str, password: str, db: Session = Depends(get_db)):
-    # Check if email already exists
-    if db.query(models.User).filter(models.User.email == email).first():
+@app.post("/register", status_code=201)
+def register(data: RegisterRequest, db: Session = Depends(get_db)):
+    if db.query(models.User).filter(models.User.email == data.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
 
     user = models.User(
-        name=name,
-        email=email,
-        password=auth.hash_password(password),
+        name=data.name,
+        email=data.email,
+        password=auth.hash_password(data.password),
     )
     db.add(user)
     db.commit()
     db.refresh(user)
 
-    token = auth.create_access_token({"sub": str(user.id)})
-    return {"access_token": token, "token_type": "bearer"}
+    return JSONResponse(
+        status_code=201,
+        content={"message": "User registered successfully"}
+    )

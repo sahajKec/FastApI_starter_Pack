@@ -1,18 +1,19 @@
 from datetime import datetime, timedelta
 from jose import jwt
-from passlib.context import CryptContext
+import bcrypt
+import hashlib
 from app.core.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# Password hashing
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    sha_password = hashlib.sha256(password.encode()).digest()
+    hashed = bcrypt.hashpw(sha_password, bcrypt.gensalt())
+    return hashed.decode('utf-8')
+
 
 def verify_password(password: str, hashed: str) -> bool:
-    return pwd_context.verify(password, hashed)
+    sha_password = hashlib.sha256(password.encode()).digest()
+    return bcrypt.checkpw(sha_password, hashed.encode('utf-8'))
 
-# JWT generation
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
