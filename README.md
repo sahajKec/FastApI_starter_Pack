@@ -41,7 +41,8 @@ cp .env.example .env
 # ALGORITHM=HS256
 # ACCESS_TOKEN_EXPIRE_MINUTES=30
 
-
+# 6. Migragte using alembic
+#alembic upgrade head
 ---
 
 ### **Step 2: Run the FastAPI server
